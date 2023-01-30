@@ -37,10 +37,10 @@ class MongoOrderDatabaseRepository(OrderDatabaseInterface):
     async def from_id(self, order_id: OrderId) -> Order:
         raw = await self.db[self.collection_name].find_one({'_id': ObjectId(str(order_id))})
         del raw['_id']
-        return Order.deserialize(raw)
+        return Order(**raw)
 
     async def save(self, entity: Order):
-        data = entity.serialize()
+        data = entity.dict()
         order_id = ObjectId(str(entity.order_id))
 
         spec = {'_id': order_id, 'version': entity.version}

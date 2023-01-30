@@ -12,5 +12,4 @@ class OrderEventPublisher(DomainEventPublisher):
         self.collection_name = collection_name
 
     async def publish(self, event: DomainEvent):
-        event = event.serialize()
-        await self.db[self.collection_name].insert_one(event)
+        await self.db[self.collection_name].insert_one(event.dict())

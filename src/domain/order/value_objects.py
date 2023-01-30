@@ -1,76 +1,27 @@
 from enum import Enum
 from typing import TYPE_CHECKING, Union
-from domain.base.primitive_value_object import PrimitiveValueObject
 
-from domain.base.str_id import StrIdValueObject
-from domain.base.value_object import ValueObject
-from domain.base.value_object_list import ValueObjectList
+from pydantic import validator
+from domain.base.value_object import ValueObject, StrIdValueObject
 from domain.product.value_objects import ProductId
-from domain.base.model import Attribute, AttributeSetter
-
-
-class OrderAmount(PrimitiveValueObject[int]):
-    value_type = int
-
-    def __init__(self, amount: Union[int, 'OrderAmount']):
-        value: int = self._validate(amount)
-        super().__init__(value)
-
-    @classmethod
-    def _validate(cls, value):
-        value = super()._validate(value)
-
-        if value < 0:
-            raise ValueError(f'Expected OrderAmount >= 0, got {value}')
-
-        return value
-
-
-
-
-class OrderAmount(PrimitiveValueObject[int]):
-    value_type = int
-
-    def __init__(self, amount: Union[int, 'OrderAmount']):
-        value: int = self._validate(amount)
-        super().__init__(value)
-
-    @classmethod
-    def _validate(cls, value):
-        value = super()._validate(value)
-
-        if value < 0:
-            raise ValueError(f'Expected OrderAmount >= 0, got {value}')
-
-        return value
-
 
 class BuyerId(StrIdValueObject):
-    if TYPE_CHECKING:
-        def __init__(self, id_: Union[str, 'BuyerId']):
-            super().__init__(...)
+    id: Union[str, 'BuyerId']
 
 
 class OrderLine(ValueObject):
-    product_id: ProductId = Attribute()
-    amount: OrderAmount = Attribute()
+    product_id: str
+    amount: int
 
-    if TYPE_CHECKING:
-        def __init__(self, *, product_id: ProductId, amount: OrderAmount):
-            super().__init__()
-
-    _product_id: ProductId = AttributeSetter()
-    _amount: OrderAmount = AttributeSetter()
-
-
-class OrderLineList(ValueObjectList[OrderLine]):
-    value_type = OrderLine
+    @validator('amount', pre=False, check_fields=False)
+    def validate_amount(cls, value):
+        if value < 0:
+            raise ValueError(f'Expected OrderAmount >= 0, got {value}')
+        return value
 
 
 class OrderId(StrIdValueObject):
-    if TYPE_CHECKING:
-        def __init__(self, id_: Union[str, 'OrderId']):
-            super().__init__(...)
+    id: Union[str, 'OrderId']
 
 
 class OrderStatusEnum(str, Enum):
@@ -83,30 +34,26 @@ class OrderStatusEnum(str, Enum):
         return value in cls._member_map_.values()
 
 
-class OrderStatus(PrimitiveValueObject[str]):
-    value_type = str
+class OrderStatus(ValueObject):
     Enum = OrderStatusEnum
+    status: str
+
+    def __init__(self, status):
+        super().__init__(status=status)
 
     def is_waiting(self) -> bool:
-        return self._value == OrderStatusEnum.WAITING
+        return self.status == OrderStatus.Enum.WAITING
 
     def is_paid(self) -> bool:
-        return self._value == OrderStatusEnum.PAID
+        return self.status == OrderStatus.Enum.PAID
 
     def is_cancelled(self) -> bool:
-        return self._value == OrderStatusEnum.CANCELLED
+        return self.status == OrderStatus.Enum.CANCELLED
 
-    @classmethod
-    def _validate(cls, status):
-        if isinstance(status, OrderStatusEnum):
-            status = status.value
-        value = super()._validate(status)
-
+    @validator('status', check_fields=False)
+    def validate(cls, value):
         if not OrderStatusEnum.has_value(value):
             raise ValueError(f'OrderStatus named "{value}" not exists')
-
         return value
 
-    if TYPE_CHECKING:
-        def __init__(self, status: Union[str, 'OrderStatus']):
-            super().__init__(...)
+

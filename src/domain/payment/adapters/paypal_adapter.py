@@ -2,7 +2,6 @@ import uuid
 
 from domain.payment.ports.payment_adapter_interface import PaymentAdapterInterface
 from domain.payment.value_objects import PaymentId
-from domain.product.value_objects import PriceThb
 
 
 class PayPalPaymentAdapter(PaymentAdapterInterface):

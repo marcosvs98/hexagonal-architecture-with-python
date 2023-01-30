@@ -1,8 +1,6 @@
 from typing import TYPE_CHECKING, Union
-from domain.base.str_id import StrIdValueObject
+from domain.base.value_object import StrIdValueObject
 
 
 class PaymentId(StrIdValueObject):
-    if TYPE_CHECKING:
-        def __init__(self, payment_id: Union[str, 'PaymentId']):
-            super().__init__(...)
+    id: Union[str, 'PaymentId']

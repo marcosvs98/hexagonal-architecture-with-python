@@ -1,5 +1,6 @@
 from typing import TypeVar
 from domain.base.model import Model
+from pydantic import validator
 
 ImplementationType = TypeVar('ImplementationType', bound='ValueObject')
 
@@ -16,3 +17,26 @@ class ValueObject(Model):
                 return False
 
         return True
+
+    class Config:
+        arbitrary_types_allowed = True
+
+
+class StrIdValueObject(ValueObject):
+    """ Base class for string value objects """
+    id: str
+
+    def __init__(self, id):
+        super().__init__(id=id)
+
+    def __repr__(self):
+        return str(self)
+
+    def __str__(self):
+        return str(self.id)
+
+    @validator('*')
+    def validate(cls, value):
+        if isinstance(value, StrIdValueObject):
+            return str(value)
+        return value

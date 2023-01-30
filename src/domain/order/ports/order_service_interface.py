@@ -1,6 +1,7 @@
 import abc
+from typing import List
 
-from domain.order.value_objects import BuyerId, OrderLineList, OrderId
+from domain.order.value_objects import BuyerId, OrderLine, OrderId
 from domain.order.entities import Order
 from domain.maps.value_objects import Address
 
@@ -27,7 +28,7 @@ class OrderServiceInterface(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def create_new_order(self, buyer_id: BuyerId, lines: OrderLineList, destination: Address) -> OrderId:
+    async def create_new_order(self, buyer_id: BuyerId, lines: List[OrderLine], destination: Address) -> OrderId:
         raise NotImplementedError
 
     @abc.abstractmethod

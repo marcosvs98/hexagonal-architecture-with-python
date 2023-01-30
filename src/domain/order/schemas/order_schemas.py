@@ -6,6 +6,11 @@ from pydantic import BaseModel
 from pydantic import validator
 from domain.order.entities import Order
 from domain.order.value_objects import OrderId
+from domain.order.value_objects import BuyerId
+from domain.payment.value_objects import PaymentId
+from pydantic import validator
+from domain.base.value_object import StrIdValueObject
+
 
 
 class Address(BaseModel):
@@ -45,7 +50,7 @@ class OrderLine(BaseModel):
 
 
 class OrderCreateRequest(BaseModel):
-    buyer_id: str
+    buyer_id: BuyerId
     lines: List[OrderLine]
     destination: Address
 
@@ -60,7 +65,7 @@ class OrderCreateRequest(BaseModel):
 
 
 class OrderCreateResponse(BaseModel):
-    order_id: str
+    order_id: OrderId
 
     class Config:
         schema_extra = {
@@ -88,7 +93,7 @@ class OrderUpdateStatusRequest(BaseModel):
 
 
 class OrderUpdateStatusResponse(BaseModel):
-    order_id: str
+    order_id: OrderId
     status: OrderStatus
 
     class Config:
@@ -105,8 +110,8 @@ class OrderUpdateStatusResponse(BaseModel):
 
 
 class OrderDetail(BaseModel):
-    buyer_id: str
-    payment_id: str
+    buyer_id: BuyerId
+    payment_id: PaymentId
     lines: List[OrderLine]
 
     product_cost: float
@@ -129,4 +134,4 @@ class OrderDetail(BaseModel):
 
     @classmethod
     def from_order(cls, order: Order):
-        return cls(**order.serialize(), total_cost=order.total_cost)
+        return cls(**order.dict(), total_cost=order.total_cost)

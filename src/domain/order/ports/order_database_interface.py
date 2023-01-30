@@ -2,7 +2,7 @@ import abc
 from typing import Union
 from sqlalchemy.orm import Session
 
-from domain.order.value_objects import BuyerId, OrderLineList, OrderId
+from domain.order.value_objects import OrderId
 from domain.order.entities import Order
 
 

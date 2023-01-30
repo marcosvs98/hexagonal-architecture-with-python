@@ -8,7 +8,7 @@ from domain.order.ports.order_service_interface import OrderServiceInterface
 
 from domain.order.value_objects import BuyerId
 from domain.order.value_objects import (
-    OrderLineList as DomainOrderLineList,
+    OrderLine as DomainOrderLine,
     OrderId
 )
 
@@ -58,11 +58,9 @@ class OrderController:
         self, request: Request, order: OrderCreateRequest, db_session: Session = Depends(get_db)  # noqa: E501
     ):
         buyer_id = BuyerId(order.buyer_id)
-        lines = DomainOrderLineList.deserialize([line.dict() for line in order.lines])
-        destination = DomainAddress.deserialize(order.destination.dict())
 
         self.service.repository.db_session = db_session
-        order_id = await self.service.create_new_order(buyer_id, lines, destination)
+        order_id = await self.service.create_new_order(buyer_id, order.lines, order.destination)
 
         return OrderCreateResponse(order_id=str(order_id))
 
