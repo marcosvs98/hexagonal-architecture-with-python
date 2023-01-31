@@ -1,26 +1,21 @@
+from functools import partial
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-# from adapters.middlewares_adapter import PreventDuplicatesMiddleware
-# from adapters.redis_adapter import RedisAdapter
-
+import event_handler
+from settings import MongoDatabaseSettings
 from exceptions import CommonException
-from schemas.order import HealthCheck
+from schemas import HealthCheck
 
 from domain.order.controllers.order_controller import OrderController
 from domain.order.repository.order_repository import OrderDatabaseRepository
 from domain.order.services.order_service import OrderService
-
 from domain.payment.adapters.paypal_adapter import PayPalPaymentAdapter
 from domain.product.adapters.product_adapter import ProductAdapter
 from domain.delivery.adapters.cost_calculator_adapter import DeliveryCostCalculatorAdapter
 from domain.maps.adapters.google_maps_adapter import GoogleMapsAdapter
 from domain.order.adapters.order_event_publisher_adapter import OrderEventPublisher
-
-import event_handler
-from settings import MongoDatabaseSettings
-from functools import partial
 
 
 def init_middlewares(app: FastAPI):
@@ -31,11 +26,6 @@ def init_middlewares(app: FastAPI):
         allow_methods=['*'],
         allow_headers=['*'],
     )
-
-    # if not ACCEPT_PARALLEL_REQUESTS:
-    #    app.add_middleware(
-    #        PreventDuplicatesMiddleware, cache=RedisAdapter(silent_mode=CACHE_SILENT_MODE)
-    #    )
 
 
 def init_routes(app: FastAPI):
