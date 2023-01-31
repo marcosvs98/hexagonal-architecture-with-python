@@ -1,6 +1,6 @@
 from typing import List
 
-from domain.order.value_objects import BuyerId, OrderLine, OrderId
+from domain.order.value_objects import BuyerId, OrderItem, OrderId
 from domain.order.entities import Order
 from domain.maps.value_objects import Address
 
@@ -34,10 +34,10 @@ class OrderService(OrderServiceInterface):
         self.event_publisher = event_publisher
 
     async def create_new_order(
-        self, buyer_id: BuyerId, lines: List[OrderLine], destination: Address
+        self, buyer_id: BuyerId, items: List[OrderItem], destination: Address
     ) -> OrderId:
 
-        product_counts = [(line.product_id, int(line.amount)) for line in lines]
+        product_counts = [(item.product_id, int(item.amount)) for item in items]
         total_product_cost = await self.product_service.total_price(product_counts)
         payment_id = await self.payment_service.new_payment(total_product_cost)
         delivery_cost = await self.delivery_service.calculate_cost(total_product_cost, destination)
@@ -46,7 +46,7 @@ class OrderService(OrderServiceInterface):
         order = Order(
             order_id=order_id,
             buyer_id=buyer_id,
-            lines=lines,
+            items=items,
             product_cost=float(total_product_cost),
             delivery_cost=float(delivery_cost),
             payment_id=payment_id,
@@ -56,7 +56,7 @@ class OrderService(OrderServiceInterface):
         event = OrderCreated(
             order_id=order_id,
             buyer_id=buyer_id,
-            lines=lines,
+            items=items,
             product_cost=total_product_cost,
             delivery_cost=delivery_cost,
             payment_id=payment_id,
@@ -81,7 +81,7 @@ class OrderService(OrderServiceInterface):
         event = OrderCancelled(
             order_id=order.order_id,
             buyer_id=order.buyer_id,
-            lines=order.lines,
+            items=order.items,
             product_cost=order.product_cost,
             delivery_cost=order.delivery_cost,
             payment_id=order.payment_id,
@@ -101,7 +101,7 @@ class OrderService(OrderServiceInterface):
         event = OrderPaid(
             order_id=order.order_id,
             buyer_id=order.buyer_id,
-            lines=order.lines,
+            items=order.items,
             product_cost=order.product_cost,
             delivery_cost=order.delivery_cost,
             payment_id=order.payment_id,

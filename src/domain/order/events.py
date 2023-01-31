@@ -18,7 +18,7 @@ class OrderEventName(Enum):
 
 
 class OrderCreated(DomainEvent):
-    event_name: str = Field(OrderEventName.CREATED)
+    event_name: str = Field(OrderEventName.CREATED.value)
     order_id: OrderId
     buyer_id: BuyerId
     items: List[OrderItem]
@@ -30,7 +30,7 @@ class OrderCreated(DomainEvent):
 
 
 class OrderPaid(DomainEvent):
-    event_name: str = Field(OrderEventName.PAID)
+    event_name: str = Field(OrderEventName.PAID.value)
     order_id: OrderId
     buyer_id: BuyerId
     items: List[OrderItem]
@@ -41,7 +41,7 @@ class OrderPaid(DomainEvent):
 
 
 class OrderCancelled(DomainEvent):
-    event_name: str = Field(OrderEventName.CANCELLED)
+    event_name: str = Field(OrderEventName.CANCELLED.value)
     order_id: OrderId
     buyer_id: BuyerId
     items: List[OrderItem]

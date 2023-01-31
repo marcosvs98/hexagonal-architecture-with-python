@@ -41,7 +41,7 @@ class OrderController:
 
     async def create_order(self, request: Request, order: OrderCreateRequest):
         buyer_id = BuyerId(order.buyer_id)
-        order_id = await self.service.create_new_order(buyer_id, order.lines, order.destination)
+        order_id = await self.service.create_new_order(buyer_id, order.items, order.destination)
         return OrderCreateResponse(order_id=str(order_id))
 
     async def get_order(self, request: Request, order_id):
