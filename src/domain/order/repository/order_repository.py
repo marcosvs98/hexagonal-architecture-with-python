@@ -6,15 +6,7 @@ from pymongo.errors import DuplicateKeyError
 from domain.order.ports.order_database_interface import OrderDatabaseInterface  # noqa: E501
 from domain.order.value_objects import OrderId
 from domain.order.entities import Order
-from exceptions import CommonException
-
-
-class EntityNotFound(CommonException):
-    pass
-
-
-class EntityOutdated(CommonException):
-    pass
+from domain.order.exceptions.order_exceptions import EntityOutdated
 
 
 class OrderDatabaseRepository(OrderDatabaseInterface):

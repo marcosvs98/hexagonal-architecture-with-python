@@ -5,11 +5,21 @@ from pydantic import validator
 from domain.base.value_object import ValueObject, StrIdValueObject
 
 
+class OrderStatusEnum(str, Enum):
+    WAITING: str = 'waiting'
+    PAID: str = 'paid'
+    CANCELLED: str = 'cancelled'
+
+    @classmethod
+    def has_value(cls, value):
+        return value in cls._member_map_.values()
+
+
 class BuyerId(StrIdValueObject):
     value: Union[str, 'BuyerId']
 
 
-class OrderLine(ValueObject):
+class OrderItem(ValueObject):
     product_id: str
     amount: int
 
@@ -22,16 +32,6 @@ class OrderLine(ValueObject):
 
 class OrderId(StrIdValueObject):
     value: Union[str, 'OrderId']
-
-
-class OrderStatusEnum(str, Enum):
-    WAITING: str = 'waiting'
-    PAID: str = 'paid'
-    CANCELLED: str = 'cancelled'
-
-    @classmethod
-    def has_value(cls, value):
-        return value in cls._member_map_.values()
 
 
 class OrderStatus(ValueObject):

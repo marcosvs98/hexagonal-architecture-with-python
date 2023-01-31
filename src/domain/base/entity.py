@@ -2,7 +2,7 @@ from domain.base.model import Model
 
 
 class Entity(Model):
-    """Base class for domain entitie objects"""
+    """Base class for domain entitie objects."""
 
     def __str__(self):
         return f'{type(self).__name__}'

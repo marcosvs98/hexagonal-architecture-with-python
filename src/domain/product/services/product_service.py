@@ -8,4 +8,4 @@ from .price_thb import PriceThb
 class ProductServiceAbstract(ABC):
     @abstractmethod
     async def total_price(self, product_counts: List[Tuple[ProductId, int]]) -> PriceThb:
-        pass
+        raise NotImplementedError

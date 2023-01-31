@@ -21,18 +21,18 @@ class Address(BaseModel):
     class Config:
         schema_extra = {
             'example': {
-                'house_number': '123',
-                'road': 'ROAD',
+                'house_number': '70',
+                'road': 'Rua Afonso Charlier',
                 'sub_district': 'SUB_DISTRICT',
-                'district': 'DISTRICT',
-                'state': 'bangkok',
-                'postcode': '10123',
-                'country': 'THAILAND',
+                'district': 'Porto Alegre',
+                'state': 'RS',
+                'postcode': '92310010',
+                'country': 'Brazil',
             }
         }
 
 
-class OrderLine(BaseModel):
+class OrderItem(BaseModel):
     product_id: str
     amount: int
 
@@ -47,14 +47,14 @@ class OrderLine(BaseModel):
 
 class OrderCreateRequest(BaseModel):
     buyer_id: BuyerId
-    lines: List[OrderLine]
+    items: List[OrderItem]
     destination: Address
 
     class Config:
         schema_extra = {
             'example': {
                 'buyer_id': str(ObjectId()),
-                'lines': [OrderLine.schema()['example']],
+                'items': [OrderItem.schema()['example']],
                 'destination': Address.schema()['example'],
             }
         }
@@ -104,7 +104,7 @@ class OrderUpdateStatusResponse(BaseModel):
 class OrderDetail(BaseModel):
     buyer_id: BuyerId
     payment_id: PaymentId
-    lines: List[OrderLine]
+    items: List[OrderItem]
 
     product_cost: float
     delivery_cost: float
@@ -116,7 +116,7 @@ class OrderDetail(BaseModel):
             'example': {
                 'buyer_id': str(ObjectId()),
                 'payment_id': str(uuid.uuid4()),
-                'lines': [OrderLine.schema()['example']],
+                'items': [OrderItem.schema()['example']],
                 'product_cost': 424.2,
                 'delivery_cost': 42.42,
                 'total_cost': 466.62,

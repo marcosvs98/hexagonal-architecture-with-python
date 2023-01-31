@@ -7,7 +7,7 @@ from adapters.rest_adapter import init_routes, init_middlewares
 def create_app():
     app = FastAPI(
         title=APPLICATION_NAME,
-        description='Aplicação FastAPI utilizando arquitetura hexagonal',
+        description='FastAPI application using hexagonal architecture',
     )
 
     init_middlewares(app)

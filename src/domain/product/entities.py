@@ -1,6 +1,5 @@
-from domain.model.base import Entity
-
-from .product_id import ProductId
+from domain.model.entity import Entity
+from domain.product.value_objects import ProductId
 
 
 class Product(Entity):

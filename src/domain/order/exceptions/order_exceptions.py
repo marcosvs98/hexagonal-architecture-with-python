@@ -1,10 +1,21 @@
-class OrderAlreadyCancelledException(Exception):
+from exceptions import CommonException
+
+
+class OrderAlreadyCancelledException(CommonException):
     pass
 
 
-class OrderAlreadyPaidException(Exception):
+class OrderAlreadyPaidException(CommonException):
     pass
 
 
-class PaymentNotVerifiedException(Exception):
+class PaymentNotVerifiedException(CommonException):
+    pass
+
+
+class EntityNotFound(CommonException):
+    pass
+
+
+class EntityOutdated(CommonException):
     pass

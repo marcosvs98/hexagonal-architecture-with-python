@@ -1,15 +1,20 @@
 import abc
-from sqlalchemy.orm import Session
-
+from typing import List
 from domain.order.value_objects import OrderId
 from domain.order.entities import Order
 
 
 class OrderDatabaseInterface(abc.ABC):
-    db_session: Session
+    @abc.abstractmethod
+    def __init__(self):
+        raise NotImplementedError
 
     @abc.abstractmethod
     async def next_identity(self) -> OrderId:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    async def all(self) -> List[Order]:
         raise NotImplementedError
 
     @abc.abstractmethod

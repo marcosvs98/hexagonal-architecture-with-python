@@ -7,14 +7,21 @@ from domain.maps.value_objects import Address
 from domain.payment.value_objects import PaymentId
 from domain.order.value_objects import OrderId
 from domain.order.value_objects import BuyerId
-from domain.order.value_objects import OrderLine
+from domain.order.value_objects import OrderItem
+
+
+class OrderEventName(Enum):
+
+    CREATED = 'payment_order_created'
+    CANCELLED = 'payment_order_cancelled'
+    PAID = 'payment_order_paid'
 
 
 class OrderCreated(DomainEvent):
-    event_name: str = Field('payment_order_created')
+    event_name: str = Field(OrderEventName.CREATED)
     order_id: OrderId
     buyer_id: BuyerId
-    lines: List[OrderLine]
+    items: List[OrderItem]
     product_cost: float
     delivery_cost: float
     payment_id: PaymentId
@@ -23,10 +30,10 @@ class OrderCreated(DomainEvent):
 
 
 class OrderPaid(DomainEvent):
-    event_name: str = Field('payment_order_paid')
+    event_name: str = Field(OrderEventName.PAID)
     order_id: OrderId
     buyer_id: BuyerId
-    lines: List[OrderLine]
+    items: List[OrderItem]
     product_cost: float
     delivery_cost: float
     payment_id: PaymentId
@@ -34,10 +41,10 @@ class OrderPaid(DomainEvent):
 
 
 class OrderCancelled(DomainEvent):
-    event_name: str = Field('payment_order_cancelled')
+    event_name: str = Field(OrderEventName.CANCELLED)
     order_id: OrderId
     buyer_id: BuyerId
-    lines: List[OrderLine]
+    items: List[OrderItem]
     product_cost: float
     delivery_cost: float
     payment_id: PaymentId

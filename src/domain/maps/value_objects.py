@@ -35,26 +35,5 @@ class Address(ValueObject):
     postcode: str
     country: str
 
-    @classmethod
-    def build(
-        cls,
-        house_number: str,
-        road: str,
-        sub_district: str,
-        district: str,
-        state: str,
-        postcode: str,
-        country: str,
-    ):
-        return cls(
-            house_number=house_number,
-            road=road,
-            sub_district=sub_district,
-            district=district,
-            state=state,
-            postcode=postcode,
-            country=country,
-        )
-
     def states(self) -> bool:
         return self.state.states()

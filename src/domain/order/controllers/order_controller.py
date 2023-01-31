@@ -42,7 +42,6 @@ class OrderController:
     async def create_order(self, request: Request, order: OrderCreateRequest):
         buyer_id = BuyerId(order.buyer_id)
         order_id = await self.service.create_new_order(buyer_id, order.lines, order.destination)
-
         return OrderCreateResponse(order_id=str(order_id))
 
     async def get_order(self, request: Request, order_id):
@@ -52,13 +51,11 @@ class OrderController:
     async def update_order(
         self, request: Request, order_id, order_status: OrderUpdateStatusRequest
     ):
-
         order_id = OrderId(order_id)
 
         if order_status.status == OrderStatus.paid:
             await self._pay_order(order_id)
             order = OrderUpdateStatusResponse(order_id=str(order_id), status='paid')
-
         elif order_status.status == OrderStatus.cancelled:
             await self._cancel_order(order_id)
             order = OrderUpdateStatusResponse(order_id=str(order_id), status='cancelled')

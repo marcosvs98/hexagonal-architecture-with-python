@@ -4,27 +4,19 @@ from domain.base.entity import Entity
 from domain.payment.value_objects import PaymentId
 from domain.order.value_objects import OrderId
 from domain.order.value_objects import BuyerId
-from domain.order.value_objects import OrderLine
+from domain.order.value_objects import OrderItem
 from domain.order.value_objects import OrderStatus
-from exceptions import CommonException
-
-
-class OrderAlreadyCancelledException(CommonException):
-    pass
-
-
-class OrderAlreadyPaidException(CommonException):
-    pass
-
-
-class PaymentNotVerifiedException(CommonException):
-    pass
+from domain.order.exceptions.order_exceptions import (
+    OrderAlreadyCancelledException,
+    OrderAlreadyPaidException,
+    PaymentNotVerifiedException,
+)
 
 
 class Order(Entity):
     order_id: OrderId
     buyer_id: BuyerId
-    lines: List[OrderLine]
+    items: List[OrderItem]
     product_cost: float
     delivery_cost: float
     payment_id: PaymentId
@@ -33,9 +25,9 @@ class Order(Entity):
 
     def pay(self, is_payment_verified: bool):
         if self.is_cancelled():
-            raise OrderAlreadyCancelledException(detail='Order\'s already cancelled')
+            raise OrderAlreadyCancelledException(detail="Order's already cancelled")
         if self.is_paid():
-            raise OrderAlreadyPaidException(detail='Order\'s already paid')
+            raise OrderAlreadyPaidException(detail="Order's already paid")
         if not is_payment_verified:
             raise PaymentNotVerifiedException(detail=f'Payment {self.payment_id} must be verified')
 
@@ -43,9 +35,9 @@ class Order(Entity):
 
     def cancel(self):
         if self.is_cancelled():
-            raise OrderAlreadyCancelledException(detail='Order\'s already cancelled')
+            raise OrderAlreadyCancelledException(detail="Order's already cancelled")
         if self.is_paid():
-            raise OrderAlreadyPaidException(detail='Order\'s already paid')
+            raise OrderAlreadyPaidException(detail="Order's already paid")
 
         self.status = OrderStatus.Enum.CANCELLED
 
