@@ -1,16 +1,15 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from settings import ACCEPT_PARALLEL_REQUESTS, CACHE_SILENT_MODE
-from adapters.middlewares_adapter import PreventDuplicatesMiddleware
-from adapters.redis_adapter import RedisAdapter
+
+# from adapters.middlewares_adapter import PreventDuplicatesMiddleware
+# from adapters.redis_adapter import RedisAdapter
 
 from exceptions import CommonException
 from schemas.order import HealthCheck
 
 from domain.order.controllers.order_controller import OrderController
-from domain.order.repository.order_repository import OrderRepository
-from domain.order.repository.mongo_order_repository import MongoOrderDatabaseRepository
+from domain.order.repository.order_repository import OrderDatabaseRepository
 from domain.order.services.order_service import OrderService
 
 from domain.payment.adapters.paypal_adapter import PayPalPaymentAdapter
@@ -27,17 +26,16 @@ from functools import partial
 def init_middlewares(app: FastAPI):
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+        allow_origins=['*'],
         allow_credentials=False,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_methods=['*'],
+        allow_headers=['*'],
     )
 
-    if not ACCEPT_PARALLEL_REQUESTS:
-        app.add_middleware(
-            PreventDuplicatesMiddleware,
-            cache=RedisAdapter(silent_mode=CACHE_SILENT_MODE)
-        )
+    # if not ACCEPT_PARALLEL_REQUESTS:
+    #    app.add_middleware(
+    #        PreventDuplicatesMiddleware, cache=RedisAdapter(silent_mode=CACHE_SILENT_MODE)
+    #    )
 
 
 def init_routes(app: FastAPI):
@@ -46,27 +44,21 @@ def init_routes(app: FastAPI):
         return {'status': 200}
 
     app.state.event_source_config = MongoDatabaseSettings()
-    app.add_event_handler(
-        'startup', func=partial(event_handler.startup, app=app)
-    )
-    app.add_event_handler(
-        'shutdown', func=partial(event_handler.shutdown, app=app)
-    )
+    app.add_event_handler('startup', func=partial(event_handler.startup, app=app))
+    app.add_event_handler('shutdown', func=partial(event_handler.shutdown, app=app))
 
     app.include_router(
         OrderController(
             OrderService(
-                repository=MongoOrderDatabaseRepository(),
+                repository=OrderDatabaseRepository(),
                 payment_service=PayPalPaymentAdapter(),
                 product_service=ProductAdapter(),
-                delivery_service=DeliveryCostCalculatorAdapter(
-                    maps_service=GoogleMapsAdapter()
-                ),
-                event_publisher=OrderEventPublisher()
+                delivery_service=DeliveryCostCalculatorAdapter(maps_service=GoogleMapsAdapter()),
+                event_publisher=OrderEventPublisher(),
             )
         ).router,
-        tags=["order"],
-        prefix="/api/v1/order"
+        tags=['order'],
+        prefix='/api/v1/order',
     )
 
     @app.exception_handler(CommonException)

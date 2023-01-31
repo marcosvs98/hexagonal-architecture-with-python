@@ -1,6 +1,6 @@
 from typing import List
 
-from domain.order.value_objects import BuyerId, OrderLine, OrderId, OrderLine
+from domain.order.value_objects import BuyerId, OrderLine, OrderId
 from domain.order.entities import Order
 from domain.maps.value_objects import Address
 
@@ -8,13 +8,12 @@ from domain.order.ports.order_service_interface import OrderServiceInterface  # 
 from domain.order.ports.order_database_interface import OrderDatabaseInterface  # noqa: E501
 from domain.payment.ports.payment_adapter_interface import PaymentAdapterInterface  # noqa: E501
 from domain.product.ports.product_adapter_interface import ProductAdapterInterface  # noqa: E501
-from domain.delivery.ports.cost_calculator_interface import DeliveryCostCalculatorAdapterInterface  # noqa: E501
+from domain.delivery.ports.cost_calculator_interface import (
+    DeliveryCostCalculatorAdapterInterface,
+)  # noqa: E501
 from domain.base.ports.event_adapter_interface import DomainEventPublisher
-from domain.order.events import OrderCreated
+from domain.order.events import OrderCreated, OrderPaid, OrderCancelled
 
-
-from domain.order.events import OrderPaid, OrderCancelled
-from typing import List
 
 class OrderService(OrderServiceInterface):
 
@@ -26,7 +25,7 @@ class OrderService(OrderServiceInterface):
         payment_service: PaymentAdapterInterface,
         product_service: ProductAdapterInterface,
         delivery_service: DeliveryCostCalculatorAdapterInterface,
-        event_publisher: DomainEventPublisher
+        event_publisher: DomainEventPublisher,
     ):
         self.repository = repository
         self.payment_service = payment_service
@@ -34,7 +33,9 @@ class OrderService(OrderServiceInterface):
         self.delivery_service = delivery_service
         self.event_publisher = event_publisher
 
-    async def create_new_order(self, buyer_id: BuyerId, lines: List[OrderLine], destination: Address) -> OrderId:
+    async def create_new_order(
+        self, buyer_id: BuyerId, lines: List[OrderLine], destination: Address
+    ) -> OrderId:
 
         product_counts = [(line.product_id, int(line.amount)) for line in lines]
         total_product_cost = await self.product_service.total_price(product_counts)
@@ -48,7 +49,7 @@ class OrderService(OrderServiceInterface):
             lines=lines,
             product_cost=float(total_product_cost),
             delivery_cost=float(delivery_cost),
-            payment_id=payment_id
+            payment_id=payment_id,
         )
         await self.repository.save(order)
 
@@ -59,7 +60,7 @@ class OrderService(OrderServiceInterface):
             product_cost=total_product_cost,
             delivery_cost=delivery_cost,
             payment_id=payment_id,
-            destination=destination
+            destination=destination,
         )
 
         await self.event_publisher.publish(event)
@@ -77,9 +78,15 @@ class OrderService(OrderServiceInterface):
         order = await self.repository.from_id(order_id)
         order.cancel()
 
-        event = OrderCancelled(order_id=order.order_id, buyer_id=order.buyer_id, lines=order.lines,
-                               product_cost=order.product_cost, delivery_cost=order.delivery_cost,
-                               payment_id=order.payment_id, version=order.version)
+        event = OrderCancelled(
+            order_id=order.order_id,
+            buyer_id=order.buyer_id,
+            lines=order.lines,
+            product_cost=order.product_cost,
+            delivery_cost=order.delivery_cost,
+            payment_id=order.payment_id,
+            version=order.version,
+        )
 
         await self.event_publisher.publish(event)
         await self.repository.save(order)
@@ -91,8 +98,14 @@ class OrderService(OrderServiceInterface):
         order = await self.repository.from_id(order_id=order_id)
         order.pay(is_payment_verified=is_payment_verified)
 
-        event = OrderPaid(order_id=order.order_id, buyer_id=order.buyer_id, lines=order.lines,
-                          product_cost=order.product_cost, delivery_cost=order.delivery_cost,
-                          payment_id=order.payment_id, version=order.version)
+        event = OrderPaid(
+            order_id=order.order_id,
+            buyer_id=order.buyer_id,
+            lines=order.lines,
+            product_cost=order.product_cost,
+            delivery_cost=order.delivery_cost,
+            payment_id=order.payment_id,
+            version=order.version,
+        )
         await self.event_publisher.publish(event)
         await self.repository.save(order)

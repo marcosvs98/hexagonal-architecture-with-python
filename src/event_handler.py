@@ -8,4 +8,3 @@ async def startup(app: FastAPI):
 
 async def shutdown(app: FastAPI):
     app.state.event_source.close()
-

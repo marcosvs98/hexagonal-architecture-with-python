@@ -1,12 +1,12 @@
 from enum import Enum
-from typing import TYPE_CHECKING, Union
+from typing import Union
 
 from pydantic import validator
 from domain.base.value_object import ValueObject, StrIdValueObject
-from domain.product.value_objects import ProductId
+
 
 class BuyerId(StrIdValueObject):
-    id: Union[str, 'BuyerId']
+    value: Union[str, 'BuyerId']
 
 
 class OrderLine(ValueObject):
@@ -21,7 +21,7 @@ class OrderLine(ValueObject):
 
 
 class OrderId(StrIdValueObject):
-    id: Union[str, 'OrderId']
+    value: Union[str, 'OrderId']
 
 
 class OrderStatusEnum(str, Enum):
@@ -55,5 +55,3 @@ class OrderStatus(ValueObject):
         if not OrderStatusEnum.has_value(value):
             raise ValueError(f'OrderStatus named "{value}" not exists')
         return value
-
-

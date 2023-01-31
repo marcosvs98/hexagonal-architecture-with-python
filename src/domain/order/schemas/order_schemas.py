@@ -3,14 +3,10 @@ from typing import List
 from enum import Enum
 from bson import ObjectId
 from pydantic import BaseModel
-from pydantic import validator
 from domain.order.entities import Order
 from domain.order.value_objects import OrderId
 from domain.order.value_objects import BuyerId
 from domain.payment.value_objects import PaymentId
-from pydantic import validator
-from domain.base.value_object import StrIdValueObject
-
 
 
 class Address(BaseModel):
@@ -18,7 +14,7 @@ class Address(BaseModel):
     road: str
     sub_district: str
     district: str
-    province: str
+    state: str
     postcode: str
     country: str
 
@@ -29,7 +25,7 @@ class Address(BaseModel):
                 'road': 'ROAD',
                 'sub_district': 'SUB_DISTRICT',
                 'district': 'DISTRICT',
-                'province': 'bangkok',
+                'state': 'bangkok',
                 'postcode': '10123',
                 'country': 'THAILAND',
             }
@@ -85,11 +81,7 @@ class OrderUpdateStatusRequest(BaseModel):
     status: str
 
     class Config:
-        schema_extra = {
-            'example': {
-                'status': 'paid'
-            }
-        }
+        schema_extra = {'example': {'status': 'paid'}}
 
 
 class OrderUpdateStatusResponse(BaseModel):

@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import TYPE_CHECKING, List
+from typing import List
 from pydantic import Field
 from domain.base.event import DomainEvent
 from domain.maps.value_objects import Address
@@ -46,6 +46,7 @@ class OrderCancelled(DomainEvent):
 
 class OrderEvent(Enum):
     """Domain Event raised for special order use cases"""
+
     CREATED = 'CREATED'
     CANCELLED = 'CANCELLED'
     PAID = 'PAID'

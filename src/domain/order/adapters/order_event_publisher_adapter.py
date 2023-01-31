@@ -1,7 +1,5 @@
-import pymongo
 from domain.base.event import DomainEvent
 from database import get_mongo_db
-from bson.objectid import ObjectId
 from settings import MongoDatabaseSettings
 from domain.base.ports.event_adapter_interface import DomainEventPublisher
 

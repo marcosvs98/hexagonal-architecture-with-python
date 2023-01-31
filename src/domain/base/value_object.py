@@ -6,7 +6,7 @@ ImplementationType = TypeVar('ImplementationType', bound='ValueObject')
 
 
 class ValueObject(Model):
-    """ Base class for value objects """
+    """Base class for value objects"""
 
     def __eq__(self: ImplementationType, other: ImplementationType):
         if type(self) is not type(other):
@@ -23,17 +23,18 @@ class ValueObject(Model):
 
 
 class StrIdValueObject(ValueObject):
-    """ Base class for string value objects """
-    id: str
+    """Base class for string value objects"""
 
-    def __init__(self, id):
-        super().__init__(id=id)
+    value: str
+
+    def __init__(self, value):  # noqa: W0622:
+        super().__init__(value=value)
 
     def __repr__(self):
         return str(self)
 
     def __str__(self):
-        return str(self.id)
+        return str(self.value)
 
     @validator('*')
     def validate(cls, value):

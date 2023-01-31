@@ -8,7 +8,9 @@ from domain.maps.value_objects import Address
 from domain.order.ports.order_database_interface import OrderDatabaseInterface  # noqa: E501
 from domain.payment.ports.payment_adapter_interface import PaymentAdapterInterface  # noqa: E501
 from domain.product.ports.product_adapter_interface import ProductAdapterInterface  # noqa: E501
-from domain.delivery.ports.cost_calculator_interface import DeliveryCostCalculatorAdapterInterface  # noqa: E501
+from domain.delivery.ports.cost_calculator_interface import (
+    DeliveryCostCalculatorAdapterInterface,
+)  # noqa: E501
 from domain.base.ports.event_adapter_interface import DomainEventPublisher  # noqa: E501
 
 
@@ -23,16 +25,18 @@ class OrderServiceInterface(abc.ABC):
         payment_service: PaymentAdapterInterface,
         product_service: ProductAdapterInterface,
         delivery_service: DeliveryCostCalculatorAdapterInterface,
-        event_publisher: DomainEventPublisher
+        event_publisher: DomainEventPublisher,
     ):
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def create_new_order(self, buyer_id: BuyerId, lines: List[OrderLine], destination: Address) -> OrderId:
+    async def create_new_order(
+        self, buyer_id: BuyerId, lines: List[OrderLine], destination: Address
+    ) -> OrderId:
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def pay_order(order_id: OrderId):
+    async def pay_order(self, order_id: OrderId):
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -40,7 +44,7 @@ class OrderServiceInterface(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def get_order_from_id(order_id: OrderId) -> Order:
+    async def get_order_from_id(self, order_id: OrderId) -> Order:
         raise NotImplementedError
 
     @abc.abstractmethod

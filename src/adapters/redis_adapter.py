@@ -16,7 +16,9 @@ def silent_mode_wrapper(function):
             try:
                 return await function(*args, **kwargs)
             except Exception as exc:
-                logger.error(f"Cache silent exception: {exc} - calling function: {function}")  # noqa: E501
+                logger.error(
+                    f'Cache silent exception: {exc} - calling function: {function}'
+                )  # noqa: E501
                 return False
         else:
             return await function(*args, **kwargs)
@@ -25,18 +27,17 @@ def silent_mode_wrapper(function):
 
 
 class RedisAdapter(CacheInterface):
-
     @staticmethod
     def __open_connection():
-        redis_url = "redis://"
+        redis_url = 'redis://'
         if REDIS_SSL:
-            redis_url = "rediss://"
+            redis_url = 'rediss://'
         if REDIS_PASSWORD:
-            redis_url += f":{REDIS_PASSWORD}@"
+            redis_url += f':{REDIS_PASSWORD}@'
 
-        redis_url += f"{REDIS_HOST}:{REDIS_PORT}/0"
+        redis_url += f'{REDIS_HOST}:{REDIS_PORT}/0'
 
-        return aioredis.from_url(redis_url, decode_responses=True, encoding="utf8")  # noqa: E501
+        return aioredis.from_url(redis_url, decode_responses=True, encoding='utf8')  # noqa: E501
 
     @silent_mode_wrapper
     async def get(self, key: str):

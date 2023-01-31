@@ -1,9 +1,9 @@
-import abc
 from domain.base.model import Model
 
 
 class DomainEvent(Model):
-    """ Base class for domain events objects """
+    """Base class for domain events objects"""
+
     @classmethod
     def domain_event_name(cls):
         return cls.__name__

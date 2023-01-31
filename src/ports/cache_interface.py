@@ -19,4 +19,4 @@ class CacheInterface(ABC):
 
     @abstractmethod
     async def delete(self, key: str) -> None:
-        raise 
+        raise NotImplementedError

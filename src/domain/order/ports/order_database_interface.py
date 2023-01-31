@@ -1,5 +1,4 @@
 import abc
-from typing import Union
 from sqlalchemy.orm import Session
 
 from domain.order.value_objects import OrderId

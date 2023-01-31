@@ -1,15 +1,13 @@
-from pydantic.fields import Field
-from pydantic import validator
-from typing import TYPE_CHECKING, List
+from typing import List
 
 from domain.base.entity import Entity
 from domain.payment.value_objects import PaymentId
 from domain.order.value_objects import OrderId
 from domain.order.value_objects import BuyerId
 from domain.order.value_objects import OrderLine
-from domain.order.value_objects import OrderStatus, OrderStatusEnum
-from domain.order.events import OrderPaid, OrderCancelled
+from domain.order.value_objects import OrderStatus
 from exceptions import CommonException
+
 
 class OrderAlreadyCancelledException(CommonException):
     pass
@@ -24,12 +22,12 @@ class PaymentNotVerifiedException(CommonException):
 
 
 class Order(Entity):
-    order_id: OrderId# = Attribute()
-    buyer_id: BuyerId# = Attribute()
-    lines: List[OrderLine]#OrderLineList# = Attribute()
-    product_cost: float #PriceThb# = Attribute()
-    delivery_cost: float #PriceThb# = Attribute()
-    payment_id: PaymentId# = Attribute()
+    order_id: OrderId
+    buyer_id: BuyerId
+    lines: List[OrderLine]
+    product_cost: float
+    delivery_cost: float
+    payment_id: PaymentId
     status: OrderStatus = OrderStatus.Enum.WAITING
     version: int = 0
 
