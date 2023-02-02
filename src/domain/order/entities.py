@@ -1,6 +1,6 @@
 from typing import List
 
-from domain.base.entity import Entity
+from domain.base.entity import AggregateRoot
 from domain.payment.value_objects import PaymentId
 from domain.order.value_objects import OrderId
 from domain.order.value_objects import BuyerId
@@ -13,7 +13,7 @@ from domain.order.exceptions.order_exceptions import (
 )
 
 
-class Order(Entity):
+class Order(AggregateRoot):
     order_id: OrderId
     buyer_id: BuyerId
     items: List[OrderItem]
